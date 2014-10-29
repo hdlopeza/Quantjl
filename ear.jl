@@ -16,7 +16,6 @@
 ### ear( 0.04,365 )
 ### ear_continuous( 0.03 )
 ### ear_continuous( 0.1 )
-### ear2bey( 0.08 )
 ### ear2hpr( 0.05039, 150 )
 
 #### Convert stated annual rate to the effective annual rate ####
@@ -31,6 +30,18 @@ function ear( ; r = nothing, m = nothing )
     ear( r, m )
 end
 
+#### Convert stated annual rate to the effective annual rate ####
+function compound_ear( ear::Float64, m::Int )
+  return ( 1 + ear )^( 1/m ) - 1.0
+end
+
+function compound_ear( ; ear = nothing, m = nothing )
+    if ear == nothing || m == nothing
+        error("Must provide all arguments")
+    end
+    compound_ear( ear, m )
+end
+
 #### Convert stated annual rate to the effective annual rate with continuous compounding ####
 function ear_continuous( r::Float64 )
   return exp( r ) - 1.0
@@ -41,18 +52,6 @@ function ear_continuous( ; r = nothing )
         error( "Must provide all arguments" )
     end
     ear_continuous( r )
-end
-
-#### bond-equivalent yield (BEY), 2 x the semiannual discount rate ####
-function ear2bey( ear::Float64 )
-  return ( ( 1.0 + ear )^0.5 - 1.0 )*2.0
-end
-
-function ear2bey( ; ear = nothing )
-    if ear == nothing
-        error("Must provide all arguments")
-    end
-    ear2bey( ear )
 end
 
 #### Computing HPR, the holding period return ####
@@ -66,3 +65,4 @@ function ear2hpr( ; ear = nothing, t = nothing )
     end
     ear2hpr( ear, t )
 end
+
