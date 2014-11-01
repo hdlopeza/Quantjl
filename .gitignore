@@ -1,4 +1,5 @@
 # Ignore files
  from Online courses
+helper.jl
 FERMWeek*
 BondPricing*
