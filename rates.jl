@@ -1,10 +1,3 @@
-# This code is in the julia port from the R package FinCal.
-# Planning to next port functions from the F# module Quantifa.
-
-# Author: Vathy M. Kamulete
-# Email: vathymut@gmail.com
-# Github: github.com/vathymut
-
 # Input
 ## r = norminal rate
 ## m = number of compounding periods per year
@@ -25,7 +18,7 @@
 ### r_simple( -1, 1.2, 1 )
 
 #### Computing r, discount rate from pv, fv and n, number of periods ####
-function r_simple( pv, fv, n::Int )
+function r_simple( pv, fv, n )
   return ( -fv/pv )^( 1/n ) - 1.0
 end
 

@@ -1,9 +1,3 @@
-# This code is the julia port from the R package FinCal.
-
-# Author: Vathy M. Kamulete
-# Email: vathymut@gmail.com
-# Github: github.com/vathymut
-
 # Input
 ## r = discount rate, or the interest rate at which the amount will be compounded each period
 ## n = number of periods
@@ -44,7 +38,7 @@ function pv_perpetuity( ; r = nothing, pmt = nothing, g = nothing, pmt_type = no
 end
 
 #### Estimate present value (pv) of a single sum ####
-function pv_simple( r::Float64, n::Int, fv )
+function pv_simple( r::Float64, n, fv )
     return ( fv/(1+r)^n )*( -1.0 )
 end
 
@@ -56,7 +50,7 @@ function pv_simple( ; r = nothing, n = nothing, fv = nothing )
 end
 
 #### Estimate present value (pv) of an annuity ####
-function pv_annuity( r::Float64, n::Int, pmt; pmt_type::Int = 0 )
+function pv_annuity( r::Float64, n, pmt; pmt_type::Int = 0 )
     any( [ isequal(pmt_type, val) for val in 0:1 ] ) || error( "Error: pmt_type should be 0 or 1!" )
     pv = ( pmt/r*( 1-1/( 1+r )^n ) )*(1 + r )^pmt_type*( -1 )
     return pv
@@ -70,7 +64,7 @@ function pv_annuity( ; r = nothing, n = nothing, pmt = nothing, pmt_type = nothi
 end
 
 #### Estimate present value (pv) ####
-function pv( r::Float64, n::Int, fv, pmt; pmt_type::Int = 0 )
+function pv( r::Float64, n, fv, pmt; pmt_type::Int = 0 )
     return pv_simple( r, n, fv ) + pv_annuity( r, n, pmt; pmt_type = pmt_type )
 end
 

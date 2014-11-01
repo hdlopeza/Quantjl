@@ -1,9 +1,3 @@
-# This code is the julia port from the R package FinCal.
-
-# Author: Vathy M. Kamulete
-# Email: vathymut@gmail.com
-# Github: github.com/vathymut
-
 # Input
 ## r = discount rate, or the interest rate at which the amount will be compounded each period
 ## n = number of periods
@@ -23,7 +17,7 @@
 ### fv_from_spot( [ 0.1, 0.1, 0,1 ]; pv = -1.0 )
 
 #### Estimate future value (fv) of a single sum ####
-function fv_simple( r::Float64, n::Int, pv )
+function fv_simple( r::Float64, n, pv )
   return ( pv*(1+r)^n )*( -1.0 )
 end
 
@@ -35,7 +29,7 @@ function fv_simple( ; r = nothing, n = nothing, pv = nothing )
 end
 
 #### Estimate future value of an annuity ####
-function fv_annuity( r::Float64, n::Int, pmt; pmt_type::Int = 0 )
+function fv_annuity( r::Float64, n, pmt; pmt_type::Int = 0 )
   any( [ isequal(pmt_type, val) for val in 0:1 ] ) || error( "Error: pmt_type should be 0 or 1!" )
   fv = ( pmt/r*( ( 1+r )^n - 1 ) )*( 1+r )^pmt_type*( -1.0 )
   return fv
@@ -49,7 +43,7 @@ function fv_annuity( ; r = nothing, n = nothing, pmt = nothing, pmt_type = nothi
 end
 
 #### Estimate future value (fv) ####
-function fv( r::Float64, n::Int, pv, pmt; pmt_type::Int = 0 )
+function fv( r::Float64, n, pv, pmt; pmt_type::Int = 0 )
   return fv_simple( r, n, pv ) + fv_annuity( r, n, pmt; pmt_type = pmt_type )
 end
 

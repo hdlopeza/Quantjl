@@ -1,9 +1,3 @@
-# This code is the julia port from the R package FinCal.
-
-# Author: Vathy M. Kamulete
-# Email: vathymut@gmail.com
-# Github: github.com/vathymut
-
 # Input
 ## r = stated annual rate
 ## bey = bond equivalent yield
@@ -13,8 +7,11 @@
 ## Call the methods directly
 ### ear2bey( 0.12 )
 ### bey2ear( 0.04 )
+### ytm( 100.0, -95.0, 0.05, 1 )
+### dirty_price( 0.05, 10, 20; face_value = 100.0, frac = 0.0 )
 
 include("pricing.jl")
+include("pv.jl")
 
 #### bond-equivalent yield (BEY), 2 x the semiannual discount rate ####
 function ear2bey( ear::Float64 )
@@ -41,7 +38,7 @@ function bey2ear( ; bey = nothing )
 end
 
 #### Compute yield to maturity ####
-function ytm( face_value, price, coupon_rate::Float64, n::Int )
+function ytm( face_value, price, coupon_rate::Float64, n )
   coupon = face_value*coupon_rate/2
   return discount_rate( n = n, price = price, fv = face_value, pmt = coupon; pmt_type = 0 )
 end
@@ -52,3 +49,40 @@ function ytm( ; face_value = nothing, price = nothing, n = nothing, coupon_rate 
     end
     ytm( face_value, price, coupon_rate, n )
 end
+
+#### Calculate the dirty price ####
+function dirty_price( r::Float64, coupon_rate::Float64, n; face_value::Float64 = 100.0, frac::Float64 = 0.0 )
+  zero(frac) <= frac <= one(frac) || error( "frac must be between 0 and 1." )
+  dp = 0.0
+  coupon = face_value*coupon_rate/2
+  for i = 1:n
+    cf_period = i < n? coupon: coupon + face_value
+    n_adj = i - frac
+    dp += pv_simple( r = r, n = n_adj, fv = cf_period  )
+  end
+  return dp
+end
+
+function dirty_price( ; r = nothing, n = nothing, coupon_rate = nothing, face_value = nothing, frac = nothing )
+    if r == nothing || n == nothing || coupon_rate == nothing || face_value == nothing || frac == nothing
+        error("Must provide all arguments")
+    end
+    dirty_price( r, coupon_rate, n; face_value = face_value, frac = frac )
+end
+
+#### Calculate the clean price ####
+function clean_price( r::Float64, coupon_rate::Float64, n; face_value::Float64 = 100.0, frac::Float64 = 0.0 )
+  zero(frac) <= frac <= one(frac) || error( "frac must be between 0 and 1." )
+  @show dp = dirty_price( r, coupon_rate, n; face_value = face_value, frac = frac )
+  coupon = face_value*coupon_rate/2
+  @show accrued_int = coupon*frac
+  return dp + accrued_int
+end
+
+function clean_price( ; r = nothing, n = nothing, coupon_rate = nothing, face_value = nothing, frac = nothing )
+    if r == nothing || n == nothing || coupon_rate == nothing || face_value == nothing || frac == nothing
+        error("Must provide all arguments")
+    end
+    clean_price( r, coupon_rate, n; face_value = face_value, frac = frac )
+end
+

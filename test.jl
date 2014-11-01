@@ -1,27 +1,10 @@
-# Author: Vathy M. Kamulete
-# Email: vathymut@gmail.com
-# Github: github.com/vathymut
-
-# The goal is NOT to achieve 100% test coverage (yet).
+# The goal is NOT to achieve 100% test coverage.
 # Think of it as sanity checks.
-# If these turn out to be useful, we'll add more tests.
-# Example: http://felixfan.github.io/finance/2014/05/12/FinCal-example-0.6/
 
-include("FinCal.jl")
-include("ear.jl")
-include("fv.jl")
-include("pv.jl")
-include("rates.jl")
-include("pricing.jl")
-include("bonds.jl")
+include("Quantjl.jl")
 using Base.Test
 
-# These tests were obtained from different sources:
-# The R FinCal package
-# The Quantifa project
-# Several online classes
-
-# Note that some of these answers have been rounded off
+# NB: comparing FloatingPoint
 @test_approx_eq_eps fv_simple( r = 0.06, n = 10, pv = -500 ) ( 895.4 ) 1e-1
 @test_approx_eq_eps pv_simple( r = 0.03, n = 5, fv = 1e+06 ) ( -862609 ) 1e-0
 @test_approx_eq_eps fv_annuity( r = 0.06, n = 25, pmt = -15000, pmt_type = 0 ) ( 822968 ) 1e-0
@@ -55,8 +38,10 @@ cf = [ 2000, 4000, 6000, 8000 ]
 r = bey2ear( bey = 0.036 )
 @test_approx_eq_eps ytm( face_value = 1000, price = -950, n = 2, coupon_rate = 0.12 ) ( 0.08836 ) 1e-5
 @test_approx_eq_eps ytm( face_value = 1000, price = -1040, n = 2, coupon_rate = 0.12 ) ( 0.03883 ) 1e-5
+r = 0.01939/2
+@test_approx_eq_eps dirty_price( r = r, coupon_rate = 0.02, n = 20, face_value = 1000.0, frac = 0.105 ) ( -1006.54 ) 1e-2
 
-# R tests
+# R tests from FinCal
 # npv( r = 0.08, cf = c(-6, 2.6, 2.4, 3.8) ) ( 1.482 )
 # irr(cf = c(-6, 2.6, 2.4, 3.8)) ( 0.2033 )
 # hpr(ev = 4, bv = 3, cfr = 0.5) ( 0.5 )

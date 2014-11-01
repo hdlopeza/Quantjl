@@ -1,4 +1,5 @@
 module Quantjl
+
 export
   ear, compound_ear, ear_continuous, ear2hpr,
   r_continuous, r_norminal, r_perpetuity, r_simple,
@@ -13,6 +14,7 @@ include("fv.jl")
 include("pv.jl")
 include("pricing.jl")
 include("bonds.jl")
+
 end
 
 

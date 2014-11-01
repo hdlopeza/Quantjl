@@ -1,9 +1,3 @@
-# This code is the julia port from the R package FinCal.
-
-# Author: Vathy M. Kamulete
-# Email: vathymut@gmail.com
-# Github: github.com/vathymut
-
 # Input
 ## r = stated annual rate
 ## m = number of compounding periods per year

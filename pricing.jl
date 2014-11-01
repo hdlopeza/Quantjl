@@ -1,10 +1,3 @@
-# This code is in the julia port from the R package FinCal.
-# Planning to next port fucntions from the F# module Quantifa.
-
-# Author: Vathy M. Kamulete
-# Email: vathymut@gmail.com
-# Github: github.com/vathymut
-
 # Input
 ## rb = borrowing rate
 ## rl = lending rate
@@ -41,7 +34,7 @@ function intra_accrint( ; r = nothing, frac = nothing, par = nothing )
 end
 
 #### Estimate period payment ####
-function pmt( r::Float64, n::Int, pv, fv; pmt_type::Int = 0 )
+function pmt( r::Float64, n, pv, fv; pmt_type::Int = 0 )
   any( [ isequal(pmt_type, val) for val in 0:1 ] ) || error( "Error: pmt_type should be 0 or 1!" )
   return ( pv+fv/( 1+r )^n )*r/( 1-1/( 1+r )^n )*(-1)*( 1+r )^( -1*pmt_type )
 end
@@ -70,8 +63,8 @@ end
 
 #### Computing the rate of return for each period ####
 using Optim: optimize
-function discount_rate( n::Int, price, fv, pmt; pmt_type::Int = 0 )
-  any( [ isequal(pmt_type, val) for val in 0:1 ] ) || error( "Error: pmt_type should be 0 or 1!" )
+function discount_rate( n, price, fv, pmt; pmt_type::Int = 0 )
+  any( [ isequal(pmt_type, val) for val in 0:1 ] ) ||  error( "Error: pmt_type should be 0 or 1!" )
   # fmin minimizes the squared difference between the pv and the price
   fmin( discount_rate ) = ( pv( r = discount_rate, fv = fv, n = n, pmt = pmt; pmt_type = pmt_type ) - price )^2
   return optimize( fmin, 1e-10, 1.0 ).minimum
