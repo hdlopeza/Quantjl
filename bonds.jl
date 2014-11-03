@@ -2,6 +2,8 @@
 ## r = stated annual rate
 ## bey = bond equivalent yield
 ## ear = effective annual rate
+## face_value = face value of bond
+## price = present value of cash flow (market price of bond)
 
 # Usage
 ## Call the methods directly
@@ -9,6 +11,7 @@
 ### bey2ear( 0.04 )
 ### ytm( 100.0, -95.0, 0.05, 1 )
 ### dirty_price( 0.05, 10, 20; face_value = 100.0, frac = 0.0 )
+### clean_price( 0.05, 10, 20; face_value = 100.0, frac = 0.0 )
 
 include("pricing.jl")
 include("pv.jl")

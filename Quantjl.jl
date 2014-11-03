@@ -7,6 +7,7 @@ export
   pv_simple, pv_annuity, pv, pv_uneven, pv_from_spot, pv_perpetuity,
   pmt, discount_rate, n_periods, price_arbitrage, intra_accrint,
   ear2bey, bey2ear, ytm, dirty_price, clean_price
+  SpotRate, spot_rate, DiscountFactor, discount_factor, ForwardRate, forward_rate
 
 include("ear.jl")
 include("rates.jl")
@@ -14,6 +15,7 @@ include("fv.jl")
 include("pv.jl")
 include("pricing.jl")
 include("bonds.jl")
+include("termstrc.jl")
 
 end
 

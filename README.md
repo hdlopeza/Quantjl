@@ -8,15 +8,14 @@ the [FRM](http://www.garp.org/frm/frm-program.aspx)
 
 ## Influences
 The code is heavily influenced by:
-- FinCal (R package).
-- Quantifa (F# project).
+- [FinCal (R package)](http://cran.r-project.org/web/packages/FinCal/index.html).
+- [Quantifa (F# project)](http://sourceforge.net/projects/quantifa/).
 - Etc.
 
 ## Tests
 The tests in `test.jl` were culled from different sources:
 - The R FinCal package
 - The Quantifa project
-- Several online classes
-- Etc
-
-
+- [Stocks and Bonds: Risks and Returns](https://class.stanford.edu/courses/GSB/StocksBonds/SelfPaced/about)
+- [Financial Engineering and Risk Management Part I](https://www.coursera.org/course/fe1)
+- Etc.
