@@ -22,23 +22,19 @@ function fv_simple( r::Float64, n, pv )
 end
 
 function fv_simple( ; r = nothing, n = nothing, pv = nothing )
-    if r == nothing || n == nothing || pv == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( r, n, pv )
     fv_simple( r, n, pv )
 end
 
 #### Estimate future value of an annuity ####
 function fv_annuity( r::Float64, n, pmt; pmt_type::Int = 0 )
-  any( [ isequal(pmt_type, val) for val in 0:1 ] ) || error( "Error: pmt_type should be 0 or 1!" )
+  validate_pmt_type( pmt_type )
   fv = ( pmt/r*( ( 1+r )^n - 1 ) )*( 1+r )^pmt_type*( -1.0 )
   return fv
 end
 
 function fv_annuity( ; r = nothing, n = nothing, pmt = nothing, pmt_type = nothing )
-    if r == nothing || n == nothing || pmt == nothing || pmt_type == nothing
-        error( "Must provide all arguments" )
-    end
+    validate_kwargs( r, n, pmt, pmt_type )
     fv_annuity( r, n, pmt, pmt_type = pmt_type )
 end
 
@@ -48,10 +44,8 @@ function fv( r::Float64, n, pv, pmt; pmt_type::Int = 0 )
 end
 
 function fv( ; r = nothing, n = nothing, pv = nothing, pmt = nothing, pmt_type = nothing )
-    if r == nothing || n == nothing || pv == nothing || pmt == nothing || pmt_type == nothing
-      error( "Must provide all arguments" )
-    end
-    fv( r, n, pv, pmt, pmt_type = pmt_type )
+    validate_kwargs( r, n, pv, pmt, pmt_type )
+    return fv( r, n, pv, pmt, pmt_type = pmt_type )
 end
 
 #### Computing the future value of an uneven cash flow series ####
@@ -77,10 +71,8 @@ function fv_uneven{ T<: Number }( r::Vector{Float64}, cf::Vector{T} )
 end
 
 function fv_uneven( ; r = nothing, cf = nothing )
-    if r == nothing || cf == nothing
-      error( "Must provide all arguments" )
-    end
-    fv_uneven( r, cf )
+    validate_kwargs( r, cf )
+    return fv_uneven( r, cf )
 end
 
 #### Computing future value from spot rates ####
@@ -95,8 +87,6 @@ function fv_from_spot( spot_rates::Vector{Float64}; pv = -1.0 )
 end
 
 function fv_from_spot( ; spot_rates = nothing, pv = nothing )
-    if spot_rates == nothing || pv == nothing
-      error( "Must provide all arguments" )
-    end
-    fv_from_spot( spot_rates, pv = pv )
+    validate_kwargs( spot_rates, pv )
+    return fv_from_spot( spot_rates, pv = pv )
 end

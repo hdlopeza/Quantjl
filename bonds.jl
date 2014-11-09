@@ -15,6 +15,7 @@
 
 include("pricing.jl")
 include("pv.jl")
+include("helper.jl")
 
 #### bond-equivalent yield (BEY), 2 x the semiannual discount rate ####
 function ear2bey( ear::Float64 )
@@ -22,10 +23,8 @@ function ear2bey( ear::Float64 )
 end
 
 function ear2bey( ; ear = nothing )
-    if ear == nothing
-        error("Must provide all arguments")
-    end
-    ear2bey( ear )
+    validate_kwargs( ear )
+    return ear2bey( ear )
 end
 
 #### yield to maturity, from the bond-equivalent yield (BEY)
@@ -34,10 +33,8 @@ function bey2ear( bey::Float64 )
 end
 
 function bey2ear( ; bey = nothing )
-    if bey == nothing
-        error("Must provide all arguments")
-    end
-    bey2ear( bey )
+    validate_kwargs( bey )
+    return bey2ear( bey )
 end
 
 #### Compute yield to maturity ####
@@ -47,10 +44,8 @@ function ytm( face_value, price, coupon_rate::Float64, n )
 end
 
 function ytm( ; face_value = nothing, price = nothing, n = nothing, coupon_rate = nothing )
-    if face_value == nothing || n == nothing || coupon_rate == nothing
-        error("Must provide all arguments")
-    end
-    ytm( face_value, price, coupon_rate, n )
+    validate_kwargs( face_value, price, coupon_rate, n )
+    return ytm( face_value, price, coupon_rate, n )
 end
 
 #### Calculate the dirty price ####
@@ -67,9 +62,7 @@ function dirty_price( r::Float64, coupon_rate::Float64, n; face_value::Float64 =
 end
 
 function dirty_price( ; r = nothing, n = nothing, coupon_rate = nothing, face_value = nothing, frac = nothing )
-    if r == nothing || n == nothing || coupon_rate == nothing || face_value == nothing || frac == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( r, coupon_rate, n, face_value, frac )
     dirty_price( r, coupon_rate, n; face_value = face_value, frac = frac )
 end
 
@@ -83,9 +76,7 @@ function clean_price( r::Float64, coupon_rate::Float64, n; face_value::Float64 =
 end
 
 function clean_price( ; r = nothing, n = nothing, coupon_rate = nothing, face_value = nothing, frac = nothing )
-    if r == nothing || n == nothing || coupon_rate == nothing || face_value == nothing || frac == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( r, coupon_rate, n, face_value, frac )
     clean_price( r, coupon_rate, n; face_value = face_value, frac = frac )
 end
 

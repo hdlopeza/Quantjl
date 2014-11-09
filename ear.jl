@@ -12,28 +12,26 @@
 ### ear_continuous( 0.1 )
 ### ear2hpr( 0.05039, 150 )
 
-#### Convert stated annual rate to the effective annual rate ####
+include("helper.jl")
+
+#### Convert stated annual rate with m compounding periods to the effective annual rate ####
 function ear( r::Float64, m::Int )
   return ( 1 + r/m )^m - 1.0
 end
 
 function ear( ; r = nothing, m = nothing )
-    if r == nothing || m == nothing
-        error("Must provide all arguments")
-    end
-    ear( r, m )
+    validate_kwargs( r, m )
+    return ear( r, m )
 end
 
-#### Convert stated annual rate to the effective annual rate ####
+#### Convert the effective annual rate to the stated annual rate with m compounding ####
 function compound_ear( ear::Float64, m::Int )
   return ( 1 + ear )^( 1/m ) - 1.0
 end
 
 function compound_ear( ; ear = nothing, m = nothing )
-    if ear == nothing || m == nothing
-        error("Must provide all arguments")
-    end
-    compound_ear( ear, m )
+    validate_kwargs( ear, m )
+    return compound_ear( ear, m )
 end
 
 #### Convert stated annual rate to the effective annual rate with continuous compounding ####
@@ -42,10 +40,8 @@ function ear_continuous( r::Float64 )
 end
 
 function ear_continuous( ; r = nothing )
-    if r == nothing
-        error( "Must provide all arguments" )
-    end
-    ear_continuous( r )
+    validate_kwargs( r )
+    return ear_continuous( r )
 end
 
 #### Computing HPR, the holding period return ####
@@ -54,9 +50,7 @@ function ear2hpr( ear::Float64, t::Int )
 end
 
 function ear2hpr( ; ear = nothing, t = nothing )
-    if ear == nothing
-        error("Must provide all arguments")
-    end
-    ear2hpr( ear, t )
+    validate_kwargs( ear, t )
+    return ear2hpr( ear, t )
 end
 

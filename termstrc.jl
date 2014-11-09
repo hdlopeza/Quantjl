@@ -92,3 +92,42 @@ function forward_rate( ; s1 = nothing, s2 = nothing )
     end
     forward_rate( s1, s2 )
 end
+
+#### Calcuate the forward price ####
+function forward_price( spot_price, discount )
+  zero(discount) <= discount <= one(discount) || error( "discount factor must be between 0 and 1." )
+  return spot_price/discount
+end
+
+function forward_price( ; spot_price = nothing, discount = nothing )
+    if spot_price == nothing || discount == nothing
+        error("Must provide all arguments")
+    end
+    forward_price( spot_price, discount )
+end
+
+#### Calcuate the spot price ####
+function spot_price( forward_price, discount )
+  zero(discount) <= discount <= one(discount) || error( "discount factor must be between 0 and 1." )
+  return discount*forward_price
+end
+
+function spot_price( ; forward_price = nothing, discount = nothing )
+    if spot_price == nothing || discount == nothing
+        error("Must provide all arguments")
+    end
+    spot_price( spot_price, forward_price )
+end
+
+#### Calcuate the forward value ####
+function forward_value( F0, F1, discount )
+  zero(discount) <= discount <= one(discount) || error( "discount factor must be between 0 and 1." )
+  return (F1-F0)*discount
+end
+
+function forward_value( ; F0 = nothing, discount = nothing )
+    if F0 == nothing || F1 == nothing || discount == nothing
+        error("Must provide all arguments")
+    end
+    forward_value( F0, F1, discount )
+end

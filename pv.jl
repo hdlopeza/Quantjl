@@ -22,19 +22,19 @@
 ### pv_perpetuity( 0.1, 1000 )
 ### pv_from_spot( [ 0.1, 0.1, 0,1 ]; fv = -1.0 )
 
+include( "helper.jl" )
+
 #### Estimate present value of a perpetuity ####
 function pv_perpetuity( r::Float64, pmt; g::Float64 = 0.0, pmt_type::Int = 0 )
-  any( [ isequal(pmt_type, val) for val in 0:1 ] ) || error( "Error: pmt_type should be 0 or 1!" )
+  validate_pmt_type( pmt_type )
   r >= g || error( "Error: g is not smaller than r!" )
   pv = ( pmt/( r-g ) )*( ( 1+r )^pmt_type )*( -1.0 )
   return pv
 end
 
 function pv_perpetuity( ; r = nothing, pmt = nothing, g = nothing, pmt_type = nothing )
-    if r == nothing || pmt == nothing || g == nothing || pmt_type == nothing
-        error("Must provide all arguments")
-    end
-    pv_perpetuity( r, pmt, g = g, pmt_type = pmt_type )
+    validate_kwargs( r, pmt, g, pmt_type )
+    return pv_perpetuity( r, pmt, g = g, pmt_type = pmt_type )
 end
 
 #### Estimate present value (pv) of a single sum ####
@@ -43,24 +43,20 @@ function pv_simple( r::Float64, n, fv )
 end
 
 function pv_simple( ; r = nothing, n = nothing, fv = nothing )
-    if r == nothing || n == nothing || fv == nothing
-        error("Must provide all arguments")
-    end
-    pv_simple( r, n, fv )
+    validate_kwargs( r, n, fv )
+    return pv_simple( r, n, fv )
 end
 
 #### Estimate present value (pv) of an annuity ####
 function pv_annuity( r::Float64, n, pmt; pmt_type::Int = 0 )
-    any( [ isequal(pmt_type, val) for val in 0:1 ] ) || error( "Error: pmt_type should be 0 or 1!" )
+    validate_pmt_type( pmt_type )
     pv = ( pmt/r*( 1-1/( 1+r )^n ) )*(1 + r )^pmt_type*( -1 )
     return pv
 end
 
 function pv_annuity( ; r = nothing, n = nothing, pmt = nothing, pmt_type = nothing )
-    if r == nothing || n == nothing || pmt == nothing || pmt_type == nothing
-        error( "Must provide all arguments" )
-    end
-    pv_annuity( r, n, pmt, pmt_type = pmt_type )
+    validate_kwargs( r, n, pmt, pmt_type )
+    return pv_annuity( r, n, pmt, pmt_type = pmt_type )
 end
 
 #### Estimate present value (pv) ####
@@ -69,10 +65,8 @@ function pv( r::Float64, n, fv, pmt; pmt_type::Int = 0 )
 end
 
 function pv( ; r = nothing, n = nothing, fv = nothing, pmt = nothing, pmt_type = nothing )
-    if r == nothing || n == nothing || fv == nothing || pmt == nothing || pmt_type == nothing
-        error( "Must provide all arguments" )
-    end
-    pv( r, n, fv, pmt, pmt_type = pmt_type )
+    validate_kwargs( r, n, fv, pmt, pmt_type )
+    return pv( r, n, fv, pmt, pmt_type = pmt_type )
 end
 
 #### Computing the present value of an uneven cash flow series ####
@@ -96,10 +90,8 @@ function pv_uneven{ T <: Number }( r::Vector{Float64}, cf::Vector{T} )
 end
 
 function pv_uneven( ; r = nothing, cf = nothing )
-    if r == nothing || cf == nothing
-      error( "Must provide all arguments" )
-    end
-    pv_uneven( r, cf )
+    validate_kwargs( r, cf )
+    return pv_uneven( r, cf )
 end
 
 #### Computing the present value from spot rates ####
@@ -114,8 +106,6 @@ function pv_from_spot( spot_rates::Vector{Float64}; fv = 1.0 )
 end
 
 function pv_from_spot( ; spot_rates = nothing, fv = nothing )
-    if spot_rates == nothing || pv == nothing
-      error( "Must provide all arguments" )
-    end
-    pv_from_spot( spot_rates, fv = fv )
+    validate_kwargs( spot_rates, fv )
+    return pv_from_spot( spot_rates, fv = fv )
 end
