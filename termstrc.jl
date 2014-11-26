@@ -19,7 +19,7 @@ type SpotRate
 
   function SpotRate( rate::Real, t::Int )
     zero(rate) <= rate <= one(rate) || error( "spot_rate must be between 0 and 1." )
-    zero(t) <= t || error( "time subscript must be greater or equal 0" )
+    zero(t) <= t || error( "time subscript must be greater or equal to 0" )
     new( rate, t )
   end
 end
@@ -32,9 +32,7 @@ function spot_rate( face_value, price, t )
 end
 
 function spot_rate( ; face_value = nothing, price = nothing, t = nothing )
-    if face_value == nothing || price == nothing || t == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( face_value, price, t )
     spot_rate( face_value, price, t )
 end
 
@@ -57,9 +55,7 @@ function discount_factor( s::SpotRate )
 end
 
 function discount_factor( ; s = nothing )
-    if s == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( s )
     discount_factor( s )
 end
 
@@ -72,7 +68,7 @@ type ForwardRate
   function ForwardRate{ T<:Real }( rate::Real, t1::T, t2::T )
     zero(rate) <= rate <= one(rate) || error( "forward rate must be between 0 and 1." )
     t1 < t2 || error( "starting period must be stricly lower than ending period" )
-    one( t1 ) <= t1 || error( "starting period must be greater or equal than one" )
+    one( t1 ) <= t1 || error( "starting period must be greater or equal to one" )
     new( rate, t1, t2 )
   end
 end
@@ -87,9 +83,7 @@ function forward_rate( s1::SpotRate, s2::SpotRate )
 end
 
 function forward_rate( ; s1 = nothing, s2 = nothing )
-    if s1 == nothing || s2 == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( s1, s2 )
     forward_rate( s1, s2 )
 end
 
@@ -100,9 +94,7 @@ function forward_price( spot_price, discount )
 end
 
 function forward_price( ; spot_price = nothing, discount = nothing )
-    if spot_price == nothing || discount == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( spot_price, discount )
     forward_price( spot_price, discount )
 end
 
@@ -113,9 +105,7 @@ function spot_price( forward_price, discount )
 end
 
 function spot_price( ; forward_price = nothing, discount = nothing )
-    if spot_price == nothing || discount == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( spot_price, forward_price )
     spot_price( spot_price, forward_price )
 end
 
@@ -125,9 +115,7 @@ function forward_value( F0, F1, discount )
   return (F1-F0)*discount
 end
 
-function forward_value( ; F0 = nothing, discount = nothing )
-    if F0 == nothing || F1 == nothing || discount == nothing
-        error("Must provide all arguments")
-    end
+function forward_value( ; F0 = nothing, F1 = nothing, discount = nothing )
+    validate_kwargs( F0, F1, discount )
     forward_value( F0, F1, discount )
 end

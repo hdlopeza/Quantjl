@@ -12,3 +12,10 @@ function validate_pmt_type( pmt_type )
   msg_error = "Error: pmt_type should be 0 or 1!"
   any( [ isequal( pmt_type, val ) for val in 0:1 ] ) || error( msg_error )
 end
+
+# Check that fraction of elapsed time is as expected
+# validate_frac( pmt_type )
+function validate_frac( frac )
+  msg_error = "Error: frac must be between 0 and 1."
+  zero( frac ) <= frac <= one( frac ) || error( msg_error )
+end

@@ -18,6 +18,7 @@
 ### price_arbitrage( 0.03, 0.02, [ 10, 10, 10 ] )
 ### intra_accrint( 0.05; frac = 1.0, par = 1.0 )
 
+include("helper.jl")
 include("pv.jl")
 
 #### Calculate accrued interest during period (intra) ####
@@ -27,10 +28,8 @@ function intra_accrint( r::Float64; frac::Float64 = 1.0, par::Float64 = 1.0 )
 end
 
 function intra_accrint( ; r = nothing, frac = nothing, par = nothing )
-    if r == nothing || frac == nothing || par == nothing
-        error("Must provide all arguments")
-    end
-    intra_accrint( r; frac = frac, par = par )
+    validate_kwargs( r, frac, par )
+    return intra_accrint( r; frac = frac, par = par )
 end
 
 #### Estimate period payment ####
@@ -40,25 +39,21 @@ function pmt( r::Float64, n, pv, fv; pmt_type::Int = 0 )
 end
 
 function pmt( ; r = nothing, n = nothing, pv = nothing, fv = nothing, pmt_type = nothing )
-    if r == nothing || n == nothing || pv == nothing || fv == nothing || pmt_type == nothing
-        error("Must provide all arguments")
-    end
-    pmt( r, n, pv, fv, pmt_type = pmt_type )
+    validate_kwargs( r, n, pv, fv, pmt_type )
+    return pmt( r, n, pv, fv, pmt_type = pmt_type )
 end
 
 #### Estimate the number of periods ####
 function n_periods( r::Float64, pv, fv; pmt = 0, pmt_type::Int = 0 )
   r >= zero( r ) || error( "r must be positive" )
-  any( [ isequal(pmt_type, val) for val in 0:1 ] ) || error( "Error: pmt_type should be 0 or 1!" )
+  validate_pmt_type( pmt_type )
   n = log( -1 * (fv*r-pmt* (1+r)^pmt_type)/(pv*r+pmt* (1+r)^pmt_type) )/log( 1 + r )
   return n
 end
 
 function n_periods( ; r = nothing, pv = nothing, fv = nothing, pmt = nothing, pmt_type = nothing )
-    if r == nothing || pv == nothing || fv == nothing || pmt == nothing || pmt_type == nothing
-        error("Must provide all arguments")
-    end
-    n_periods( r, pv, fv, pmt = pmt, pmt_type = pmt_type )
+    validate_kwargs( r, pv, fv, pmt, pmt_type )
+    return n_periods( r, pv, fv, pmt = pmt, pmt_type = pmt_type )
 end
 
 #### Computing the rate of return for each period ####
@@ -71,10 +66,8 @@ function discount_rate( n, price, fv, pmt; pmt_type::Int = 0 )
 end
 
 function discount_rate( ; n = nothing, price = nothing, fv = nothing, pmt = nothing, pmt_type = nothing )
-    if pmt == nothing || n == nothing || price == nothing || fv == nothing || pmt_type == nothing
-        error("Must provide all arguments")
-    end
-    discount_rate( n, price, fv, pmt, pmt_type = pmt_type )
+    validate_kwargs( n, price, fv, pmt, pmt_type )
+    return discount_rate( n, price, fv, pmt, pmt_type = pmt_type )
 end
 
 #### Find the lower and upper bound of the arbitrage price ####
@@ -86,9 +79,7 @@ function price_arbitrage{ T <: Number }( rb, rl, cf::Vector{ T } )
 end
 
 function price_arbitrage( ; rb = nothing, rl = nothing, cf = nothing )
-    if rb == nothing || rl == nothing || cf == nothing
-        error("Must provide all arguments")
-    end
-    price_arbitrage( rb, rl, cf )
+    validate_kwargs( rb, rl, cf )
+    return price_arbitrage( rb, rl, cf )
 end
 

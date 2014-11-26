@@ -40,10 +40,11 @@ r = bey2ear( bey = 0.036 )
 @test_approx_eq_eps ytm( face_value = 1000, price = -1040, n = 2, coupon_rate = 0.12 ) ( 0.03883 ) 1e-5
 r = 0.01939/2
 @test_approx_eq_eps dirty_price( r = r, coupon_rate = 0.02, n = 20, face_value = 1000.0, frac = 0.105 ) ( -1006.54 ) 1e-2
+@test_approx_eq_eps price_from_ytm( ytm = 0.04, coupon_rate = 0.12, n = 20 ) ( -1271.81 ) 1e-2
+@test_approx_eq_eps irr( cf = [ -6, 2.6, 2.4, 3.8 ] ) ( 0.2033 ) 1e-4
 
 # R tests from FinCal
 # npv( r = 0.08, cf = c(-6, 2.6, 2.4, 3.8) ) ( 1.482 )
-# irr(cf = c(-6, 2.6, 2.4, 3.8)) ( 0.2033 )
 # hpr(ev = 4, bv = 3, cfr = 0.5) ( 0.5 )
 # twrr( ev = c(12, 26), bv = c(10, 24), cfr = c(1, 2) ) ( 0.2315 )
 # bdy(d = 150, f = 10000, t = 120) ( 0.045 )

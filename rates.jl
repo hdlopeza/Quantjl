@@ -8,6 +8,7 @@
 ## pmt = payment per period
 ## face_value = face value of bond
 ## coupon_rate = coupon rate
+## cf = uneven cash flow
 
 # Usage
 ## Call the methods directly
@@ -16,6 +17,7 @@
 ### r_norminal( 0.03, 4 )
 ### r_perpetuity( 4.5, -75 )
 ### r_simple( -1, 1.2, 1 )
+### irr( [ -5, 1.6, 2.4, 2.8 ] )
 
 #### Computing r, discount rate from pv, fv and n, number of periods ####
 function r_simple( pv, fv, n )
@@ -23,9 +25,7 @@ function r_simple( pv, fv, n )
 end
 
 function r_simple( ; pv = nothing, fv = nothing, n = nothing )
-    if pv == nothing || fv == nothing || n == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( pv, fv, n )
     r_simple( pv, fv, n )
 end
 
@@ -35,9 +35,7 @@ function r_continuous( r::Float64, m::Int )
 end
 
 function r_continuous( ; r = nothing, m = nothing )
-    if r == nothing || m == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( r, m )
     r_continuous( r, m )
 end
 
@@ -47,9 +45,7 @@ function r_norminal( rc::Float64, m::Int )
 end
 
 function r_norminal( ; rc = nothing, m = nothing )
-    if rc == nothing || m == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( rc, m )
     r_norminal( rc, m )
 end
 
@@ -59,10 +55,18 @@ function r_perpetuity( pmt::Float64, pv )
 end
 
 function r_perpetuity( ; pmt = nothing, pv = nothing )
-    if pmt == nothing || pv == nothing
-        error("Must provide all arguments")
-    end
+    validate_kwargs( pmt, pv )
     r_perpetuity( pmt, pv )
 end
 
+#### Computing the IRR, the internal rate of return ####
+using Optim: optimize
+function irr{ T <: Number }( cf::Vector{T} )
+  fmin( irr::Float64 ) = ( -1*pv_uneven( r = irr, cf = cf[2:end] ) + cf[1] )^2
+  return optimize( fmin, 1e-10, 1.0 ).minimum
+end
 
+function irr( ; cf = nothing )
+    validate_kwargs( cf )
+    irr( cf )
+end
