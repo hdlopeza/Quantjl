@@ -9,15 +9,10 @@
 ## face_value = face value of bond
 ## coupon_rate = coupon rate
 ## cf = uneven cash flow
+## r = stated annual rate
+## ear = effective annual rate
 
-# Usage
-## Call the methods directly
-### r_continuous( 0.03, 4 )
-### r_norminal( 0.03, 1 )
-### r_norminal( 0.03, 4 )
-### r_perpetuity( 4.5, -75 )
-### r_simple( -1, 1.2, 1 )
-### irr( [ -5, 1.6, 2.4, 2.8 ] )
+include("helper.jl")
 
 #### Computing r, discount rate from pv, fv and n, number of periods ####
 function r_simple( pv, fv, n )
@@ -69,4 +64,44 @@ end
 function irr( ; cf = nothing )
     validate_kwargs( cf )
     irr( cf )
+end
+
+#### Convert stated annual rate with m compounding periods to the effective annual rate ####
+function ear( r::Float64, m::Int )
+  return ( 1 + r/m )^m - 1.0
+end
+
+function ear( ; r = nothing, m = nothing )
+    validate_kwargs( r, m )
+    return ear( r, m )
+end
+
+#### Convert the effective annual rate to the stated annual rate with m compounding ####
+function compound_ear( ear::Float64, m::Int )
+  return ( 1 + ear )^( 1/m ) - 1.0
+end
+
+function compound_ear( ; ear = nothing, m = nothing )
+    validate_kwargs( ear, m )
+    return compound_ear( ear, m )
+end
+
+#### Convert stated annual rate to the effective annual rate with continuous compounding ####
+function ear_continuous( r::Float64 )
+  return exp( r ) - 1.0
+end
+
+function ear_continuous( ; r = nothing )
+    validate_kwargs( r )
+    return ear_continuous( r )
+end
+
+#### Computing HPR, the holding period return ####
+function ear2hpr( ear::Float64, t::Int )
+  return ( 1.0 + ear )^( t/365 - 1.0 )
+end
+
+function ear2hpr( ; ear = nothing, t = nothing )
+    validate_kwargs( ear, t )
+    return ear2hpr( ear, t )
 end
