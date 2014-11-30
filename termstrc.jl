@@ -12,6 +12,8 @@
 ### ForwardRate( 0.05, 1, 2 )
 ### forward_rate( SpotRate( 0.05, 5 ), SpotRate( 0.045, 6 ) )
 
+include("timevalue.jl")
+
 #### Create Spot Rate type ####
 type SpotRate
   rate::Real
@@ -25,7 +27,6 @@ type SpotRate
 end
 
 #### Calculate the spot rate ####
-include("pricing.jl")
 function spot_rate( face_value, price, t )
   r = discount_rate( n = t, price = price, face_value = face_value, pmt = 0; pmt_type = 0 )
   return SpotRate( r, t )

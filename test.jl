@@ -30,8 +30,8 @@ spot_rates = [ 0.1, 0.1, 0.1 ]
 @test_approx_eq_eps n_periods( r = 0.09, pv = 0, fv = 10000, pmt = -1000, pmt_type = 0) ( 7.448 ) 1e-3
 @test_approx_eq_eps pmt( r = 0.06, n = 5, pv = 5e+05, fv = 0, pmt_type = 0 ) ( -118698 ) 1e-0
 cf = [ 2000, 4000, 6000, 8000 ]
-@test_approx_eq_eps price_arbitrage( rb = 0.1, rl = 0.05, cf = cf )[1] ( -15095.963390 ) 1e-5
-@test_approx_eq_eps price_arbitrage( rb = 0.1, rl = 0.05, cf = cf )[2] ( -17297.525208 ) 1e-5
+@test_approx_eq_eps price_arbitrage( rborrow = 0.1, rlend = 0.05, cf = cf )[1] ( -15095.963390 ) 1e-5
+@test_approx_eq_eps price_arbitrage( rborrow = 0.1, rlend = 0.05, cf = cf )[2] ( -17297.525208 ) 1e-5
 @test_approx_eq_eps discount_rate( n = 5, price = 0, fv = 600, pmt = -100, pmt_type = 0) ( 0.0913 ) 1e-4
 @test_approx_eq_eps ear2bey(ear = 0.06) ( 0.05913 ) 1e-5
 @test_approx_eq_eps bey2ear( bey = 0.036 ) ( 0.03632 ) 1e-5

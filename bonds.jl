@@ -15,8 +15,7 @@
 ### clean_price( 0.05, 10, 20; face_value = 100.0, frac = 0.0 )
 ### price_from_ytm( 0.04, 0.04, 20; face_value = 1000, pmt_type = 0 )
 
-include( "pricing.jl" )
-include( "pv.jl" )
+include( "timevalue.jl" )
 include( "helper.jl" )
 
 #### bond-equivalent yield (BEY), 2 x the semiannual discount rate ####
@@ -131,11 +130,6 @@ function macaulay_duration( ; ytm = nothing, cf = nothing )
     validate_kwargs( ytm, cf )
     return macaulay_duration( ytm, cf )
 end
-
-p0 = price_from_ytm( ytm = 0.09, coupon_rate = 0.1*2, n = 3, face_value = 100 )
-ytm0 = ytm( face_value = 100, price = p0, coupon_rate=0.1*2, n = 3)
-methods( price_from_ytm )
-@show bonds_duration( ytm0, cf )
 
 #### Calculate the linear approx. of the change in price from change in ytm ####
 function duration_from_pch( pch::Float64, r0::Float64, r1::Float64 )

@@ -8,7 +8,6 @@
 #   ear2bey, bey2ear, ytm, dirty_price, clean_price, macaulay_duration, bonds_duration,
 #   SpotRate, spot_rate, spot_price, DiscountFactor, discount_factor, ForwardRate, forward_rate, forward_price, forward_value
 
-include("ear.jl")
 include("rates.jl")
 include("timevalue.jl")
 include("bonds.jl")
