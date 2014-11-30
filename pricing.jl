@@ -83,3 +83,9 @@ function price_arbitrage( ; rb = nothing, rl = nothing, cf = nothing )
     return price_arbitrage( rb, rl, cf )
 end
 
+#### Generate cashflow ####
+function cf_from_bond( face_value, coupon_rate, n )
+  coupon_pmt = face_value*coupon_rate/2
+  return rep...
+end
+

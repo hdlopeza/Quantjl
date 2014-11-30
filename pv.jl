@@ -80,7 +80,7 @@ function pv_uneven{ T <: Number }( r::Float64, cf::Vector{T} )
 end
 
 function pv_uneven{ T <: Number }( r::Vector{Float64}, cf::Vector{T} )
-  length( cf ) == length( r  ) || error( "Cash flows and discount rates must be the same size." )
+  length( cf ) == length( r  ) || error( "Cash flows and rates must be the same size." )
   n = length( cf )
   sum = 0.0
   for i=1:n

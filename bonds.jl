@@ -15,9 +15,9 @@
 ### clean_price( 0.05, 10, 20; face_value = 100.0, frac = 0.0 )
 ### price_from_ytm( 0.04, 0.04, 20; face_value = 1000, pmt_type = 0 )
 
-include("pricing.jl")
-include("pv.jl")
-include("helper.jl")
+include( "pricing.jl" )
+include( "pv.jl" )
+include( "helper.jl" )
 
 #### bond-equivalent yield (BEY), 2 x the semiannual discount rate ####
 function ear2bey( ear::Float64 )
@@ -53,7 +53,7 @@ end
 #### Calculate the price from the yield to maturity ####
 function price_from_ytm( ytm::Float64, coupon_rate::Float64, n; face_value = 1000, pmt_type = 0 )
   coupon_pmt = face_value*coupon_rate/2
-  return pv( r = ytm, n = n, fv = 1000, pmt = coupon_pmt, pmt_type = 0 )
+  return pv( r = ytm, n = n, fv = face_value, pmt = coupon_pmt, pmt_type = 0 )
 end
 
 function price_from_ytm( ; ytm = nothing, coupon_rate = nothing, n = nothing, face_value = 1000, pmt_type = 0 )
@@ -93,17 +93,49 @@ function clean_price( ; r = nothing, n = nothing, coupon_rate = nothing, face_va
     clean_price( r, coupon_rate, n; face_value = face_value, frac = frac )
 end
 
-#### Calculate the linear approx. of the change in price from change in ytm ####
-function pch_from_ytm( duration::Float64, r0::Float64, r1::Float64 )
-  m_r0 = 1 + r0
-  m_r1 = 1 + r1
-  return -duration*( m_r1-m_r0 )/m_r0
+#### Calculate bonds duration: weighted average maturity ####
+function bonds_duration{ T <: Number }( r::Vector{Float64}, cf::Vector{T} )
+  length( cf ) == length( r  ) || error( "Cash flows and rates must be the same size." )
+  n = length( cf )
+  dcf, wcf = 0.0, 0.0  # discounted and weighted discounted cash flow
+  for i=1:n
+    cfi = pv_simple( r[i], i, cf[i] )
+    dcf += cfi
+    wcf += i*cfi
+  end
+  return wcf/dcf
 end
 
-function pch_from_ytm( ; duration = nothing, r0 = nothing, r1 = nothing )
-    validate_kwargs( duration, r0, r1 )
-    return pch_from_ytm( duration, r0, r1 )
+function bonds_duration{ T <: Number }( r::Float64, cf::Vector{T} )
+  n = length( cf )
+  dcf, wcf = 0.0, 0.0  # discounted and weighted discounted cash flow
+  for i=1:n
+    cfi = pv_simple( r, i, cf[i] )
+    dcf += cfi
+    wcf += i*cfi
+  end
+  return wcf/dcf
 end
+
+function bonds_duration( ; r = nothing, cf = nothing )
+    validate_kwargs( r, cf )
+    return bonds_duration( r, cf )
+end
+
+#### Calculate the Macaulay duration ####
+function macaulay_duration{ T <: Number }( ytm::Float64, cf::Vector{T} )
+  return bonds_duration( ytm, cf )
+end
+
+function macaulay_duration( ; ytm = nothing, cf = nothing )
+    validate_kwargs( ytm, cf )
+    return macaulay_duration( ytm, cf )
+end
+
+p0 = price_from_ytm( ytm = 0.09, coupon_rate = 0.1*2, n = 3, face_value = 100 )
+ytm0 = ytm( face_value = 100, price = p0, coupon_rate=0.1*2, n = 3)
+methods( price_from_ytm )
+@show bonds_duration( ytm0, cf )
 
 #### Calculate the linear approx. of the change in price from change in ytm ####
 function duration_from_pch( pch::Float64, r0::Float64, r1::Float64 )
@@ -116,4 +148,17 @@ function duration_from_pch( ; pch = nothing, r0 = nothing, r1 = nothing )
     validate_kwargs( pch, r0, r1 )
     return duration_from_pch( pch, r0, r1 )
 end
+
+#### Calculate the linear approx. of the change in price from change in ytm ####
+function pch_from_ytm( duration::Float64, r0::Float64, r1::Float64 )
+  m_r0 = 1 + r0
+  m_r1 = 1 + r1
+  return -duration*( m_r1-m_r0 )/m_r0
+end
+
+function pch_from_ytm( ; duration = nothing, r0 = nothing, r1 = nothing )
+    validate_kwargs( duration, r0, r1 )
+    return pch_from_ytm( duration, r0, r1 )
+end
+
 

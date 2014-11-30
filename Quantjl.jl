@@ -5,7 +5,7 @@
 #   fv_simple, fv_annuity, fv, fv_uneven, fv_from_spot,
 #   pv_simple, pv_annuity, pv, pv_uneven, pv_from_spot, pv_perpetuity,
 #   pmt, discount_rate, n_periods, price_arbitrage, intra_accrint,
-#   ear2bey, bey2ear, ytm, dirty_price, clean_price,
+#   ear2bey, bey2ear, ytm, dirty_price, clean_price, macaulay_duration, bonds_duration
 #   SpotRate, spot_rate, spot_price, DiscountFactor, discount_factor, ForwardRate, forward_rate, forward_price, forward_value
 
 include("ear.jl")

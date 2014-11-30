@@ -10,6 +10,7 @@ the [FRM](http://www.garp.org/frm/frm-program.aspx)
 The code is heavily influenced by:
 - [FinCal (R package)](http://cran.r-project.org/web/packages/FinCal/index.html).
 - [Quantifa (F# project)](http://sourceforge.net/projects/quantifa/).
+- [C++ programs for Finance](http://finance.bi.no/~bernt/gcc_prog/)
 - Etc.
 
 ## Tests
