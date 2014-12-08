@@ -6,15 +6,6 @@
 ## price = present value of cash flow (market price of bond)
 ## ytm = yield to maturity
 
-# Usage
-## Call the methods directly
-### ear2bey( 0.12 )
-### bey2ear( 0.04 )
-### ytm( 100.0, -95.0, 0.05, 1 )
-### dirty_price( 0.05, 10, 20; face_value = 100.0, frac = 0.0 )
-### clean_price( 0.05, 10, 20; face_value = 100.0, frac = 0.0 )
-### price_from_ytm( 0.04, 0.04, 20; face_value = 1000, pmt_type = 0 )
-
 include( "timevalue.jl" )
 include( "helper.jl" )
 
@@ -52,7 +43,7 @@ end
 #### Calculate the price from the yield to maturity ####
 function price_from_ytm( ytm::Float64, coupon_rate::Float64, n; face_value = 1000, pmt_type = 0 )
   coupon_pmt = face_value*coupon_rate/2
-  return pv( r = ytm, n = n, fv = face_value, pmt = coupon_pmt, pmt_type = 0 )
+  return pv( r = ytm, n = n, fv = face_value, pmt = coupon_pmt, pmt_type = pmt_type )
 end
 
 function price_from_ytm( ; ytm = nothing, coupon_rate = nothing, n = nothing, face_value = 1000, pmt_type = 0 )
@@ -92,43 +83,66 @@ function clean_price( ; r = nothing, n = nothing, coupon_rate = nothing, face_va
     clean_price( r, coupon_rate, n; face_value = face_value, frac = frac )
 end
 
+#### Generate cashflow ####
+function cf_from_bond( face_value, coupon_rate::Float64, n )
+  coupon_pmt = face_value*coupon_rate/2
+  cf = fill( coupon_pmt, n )
+  cf[ end ] += face_value
+  return cf
+end
+
+function cf_from_bond( ; face_value = nothing, coupon_rate = nothing, n = nothing )
+    validate_kwargs( face_value, coupon_rate, n )
+    cf_from_bond( face_value, coupon_rate, n )
+end
+
 #### Calculate bonds duration: weighted average maturity ####
-function bonds_duration{ T <: Number }( r::Vector{Float64}, cf::Vector{T} )
+function bond_duration{ T <: Number }( r::Vector{Float64}, cf::Vector{T} )
   length( cf ) == length( r  ) || error( "Cash flows and rates must be the same size." )
   n = length( cf )
   dcf, wcf = 0.0, 0.0  # discounted and weighted discounted cash flow
   for i=1:n
-    cfi = pv_simple( r[i], i, cf[i] )
+    cfi = abs( pv_simple( r[i], i, cf[i] ) )
     dcf += cfi
     wcf += i*cfi
   end
   return wcf/dcf
 end
 
-function bonds_duration{ T <: Number }( r::Float64, cf::Vector{T} )
+function bond_duration{ T <: Number }( r::Float64, cf::Vector{T} )
   n = length( cf )
   dcf, wcf = 0.0, 0.0  # discounted and weighted discounted cash flow
   for i=1:n
-    cfi = pv_simple( r, i, cf[i] )
+    cfi = abs( pv_simple( r, i, cf[i] ) )
     dcf += cfi
     wcf += i*cfi
   end
   return wcf/dcf
 end
 
-function bonds_duration( ; r = nothing, cf = nothing )
+function bond_duration( ; r = nothing, cf = nothing )
     validate_kwargs( r, cf )
-    return bonds_duration( r, cf )
+    return bond_duration( r, cf )
 end
 
 #### Calculate the Macaulay duration ####
 function macaulay_duration{ T <: Number }( ytm::Float64, cf::Vector{T} )
-  return bonds_duration( ytm, cf )
+  return bond_duration( ytm, cf )
 end
 
 function macaulay_duration( ; ytm = nothing, cf = nothing )
     validate_kwargs( ytm, cf )
     return macaulay_duration( ytm, cf )
+end
+
+#### Calculate the modified duration from the macaulay duration ####
+function modified_duration( macd::Float64, r::Float64 )
+  return macd/( 1 + r )
+end
+
+function modified_duration( ; macd = nothing, r = nothing )
+    validate_kwargs( macd, r )
+    return modified_duration( macd, r )
 end
 
 #### Calculate the linear approx. of the change in price from change in ytm ####
@@ -143,16 +157,14 @@ function duration_from_pch( ; pch = nothing, r0 = nothing, r1 = nothing )
     return duration_from_pch( pch, r0, r1 )
 end
 
-#### Calculate the linear approx. of the change in price from change in ytm ####
-function pch_from_ytm( duration::Float64, r0::Float64, r1::Float64 )
-  m_r0 = 1 + r0
-  m_r1 = 1 + r1
-  return -duration*( m_r1-m_r0 )/m_r0
+#### Calculate the percentage change in price from change in ytm ####
+function pctchange_from_duration( duration::Float64, r0::Float64, r1::Float64 )
+  modD = modified_duration( macd = duration, r = r1 )
+  return -modD*( r1 - r0 )
 end
 
-function pch_from_ytm( ; duration = nothing, r0 = nothing, r1 = nothing )
+function pctchange_from_duration( ; duration = nothing, r0 = nothing, r1 = nothing )
     validate_kwargs( duration, r0, r1 )
-    return pch_from_ytm( duration, r0, r1 )
+    return pctchange_from_duration( duration, r0, r1 )
 end
-
 

@@ -42,6 +42,36 @@ r = 0.01939/2
 @test_approx_eq_eps dirty_price( r = r, coupon_rate = 0.02, n = 20, face_value = 1000.0, frac = 0.105 ) ( -1006.54 ) 1e-2
 @test_approx_eq_eps price_from_ytm( ytm = 0.04, coupon_rate = 0.12, n = 20 ) ( -1271.81 ) 1e-2
 @test_approx_eq_eps irr( cf = [ -6, 2.6, 2.4, 3.8 ] ) ( 0.2033 ) 1e-4
+@test cf_from_bond( face_value = 100, coupon_rate = 0.1*2, n = 3 ) == Float64[ 10, 10, 110 ]
+cf0 = Float64[ 10, 10, 110 ]
+b0 = pv_uneven( r = 0.09, cf = cf0 )
+@test_approx_eq_eps bond_duration( r = 0.09, cf = cf0 ) ( 2.739 ) (1e-4)
+@test_approx_eq_eps irr( cf = [ -6, 2.6, 2.4, 3.8 ] ) ( 0.2033 ) 1e-4
+
+# MBS tests
+r = 0.09/12
+pt_rate = 0.09/12
+n = 360
+face_value = 1.0e8
+pmt0 = pmt( r = r, n = n, pv = face_value, fv = 0, pmt_type = 0 )
+@test_approx_eq_eps ( pmt0 ) ( -804600 ) ( 1e2 )
+cpr0 = mbs_cpr_schedule( psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold = 30, n = 360 )
+smm0 = mbs_cpr2smm( cpr0 )
+@test_approx_eq_eps ( smm0[1] ) ( 0.0001668 ) ( 1e-7 )
+intp0 = mbs_interest_payment( balance = face_value , pt_rate = r )
+@test_approx_eq_eps ( intp0 ) ( 750000 ) ( 1e1 )
+pp0 = mbs_principal_payment( pmt = pmt0, balance = face_value, pt_rate = r )
+@test_approx_eq_eps ( pp0 ) ( 54600 ) ( 1e2 )
+pr0 = mbs_prepayment( balance = face_value, pmt = pmt0, smm = smm0[1] )
+@test_approx_eq_eps ( pr0 ) ( 16667 ) ( 1e3 )
+b1 = mbs_remaining_balance( balance = face_value, wac = r, pmt = pmt0; smm = smm0[1] )
+interest_pmnt, principal_pmnt, prepayment, balance_remaining =
+  mbs_levelpmt_cf( r, n, face_value, pt_rate )
+@show balance_remaining[end]
+@show prepayment[end-1:end]
+@show principal_pmnt[end-1:end]
+@show interest_pmnt[end-1:end]
+
 
 # R tests from FinCal
 # npv( r = 0.08, cf = c(-6, 2.6, 2.4, 3.8) ) ( 1.482 )

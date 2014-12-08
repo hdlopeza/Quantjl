@@ -1,6 +1,6 @@
 # This script is a collection of function signatures
 # for the routines defined in this module.
-# Think of it as something-like a header file in C/C++
+# Think of it as something-like a header file in C/C++ (minus the type declarations)
 
 # Usage
 ### pv_simple( 0.03, 3, 1000.0 )
@@ -36,3 +36,9 @@
 ### ear_continuous( 0.03 )
 ### ear_continuous( 0.1 )
 ### ear2hpr( 0.05039, 150 )
+### ear2bey( 0.12 )
+### bey2ear( 0.04 )
+### ytm( 100.0, -95.0, 0.05, 1 )
+### dirty_price( 0.05, 10, 20; face_value = 100.0, frac = 0.0 )
+### clean_price( 0.05, 10, 20; face_value = 100.0, frac = 0.0 )
+### price_from_ytm( 0.04, 0.04, 20; face_value = 1000, pmt_type = 0 )

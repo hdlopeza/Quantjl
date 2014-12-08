@@ -236,9 +236,3 @@ function price_arbitrage( ; rborrow = nothing, rlend = nothing, cf = nothing )
     validate_kwargs( rborrow, rlend, cf )
     return price_arbitrage( rborrow, rlend, cf )
 end
-
-#### Generate cashflow ####
-function cf_from_bond( face_value, coupon_rate, n )
-  coupon_pmt = face_value*coupon_rate/2
-  return nothing
-end

@@ -2,15 +2,16 @@
 
 Code written in [Julia](http://julialang.org/) for Computational Finance.
 
-I'm writing it in `Julia`, rather than `R`, `MATLAB` or `Python`,
+I'm writing it in `Julia`, rather than `R`, `MATLAB`, `Python` or `Fortran`,
 as a way to force myself to learn `Julia` and study for
 the [FRM](http://www.garp.org/frm/frm-program.aspx)
 
 ## Influences
-The code is heavily influenced by:
+The codebase is heavily influenced by:
 - [FinCal (R package)](http://cran.r-project.org/web/packages/FinCal/index.html).
 - [Quantifa (F# project)](http://sourceforge.net/projects/quantifa/).
 - [C++ programs for Finance](http://finance.bi.no/~bernt/gcc_prog/)
+- [Matlab's Financial Instruments Toolbox](http://www.mathworks.com/help/fininst/mortgage-backed-securities-1.html)
 - Etc.
 
 ## Tests

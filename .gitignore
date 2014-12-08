@@ -1,8 +1,7 @@
-# Ignore files
- from Online courses
+# Ignore files from Online courses
 FERMWeek*
-BondPricing*
+BondPricingWeek*
 
-# File to mess about with some ideas
+# File to mess about with some ideas (delete in the end)
 tryit.jl
 
