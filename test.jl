@@ -49,28 +49,34 @@ b0 = pv_uneven( r = 0.09, cf = cf0 )
 @test_approx_eq_eps irr( cf = [ -6, 2.6, 2.4, 3.8 ] ) ( 0.2033 ) 1e-4
 
 # MBS tests
-r = 0.09/12
-pt_rate = 0.09/12
-n = 360
-face_value = 1.0e8
+r = 0.08125/12
+pt_rate = 0.075/12
+n = 360 - 3
+face_value = 400
 pmt0 = pmt( r = r, n = n, pv = face_value, fv = 0, pmt_type = 0 )
-@test_approx_eq_eps ( pmt0 ) ( -804600 ) ( 1e2 )
-cpr0 = mbs_cpr_schedule( psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold = 30, n = 360 )
+@test_approx_eq_eps ( pmt0 ) ( -2.976 ) ( 1e-3 )
+cpr0 = mbs_cpr_schedule( psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold = 30, n = 360, seasoning = 3 )
+@show cpr0
+@test_approx_eq_eps ( cpr0[1] ) ( 0.008 ) ( 1e-3 )
+@test_approx_eq_eps ( cpr0[14] ) ( 0.034 ) ( 1e-3 )
+@test_approx_eq_eps ( cpr0[end] ) ( 0.06 ) ( 1e-3 )
 smm0 = mbs_cpr2smm( cpr0 )
-@test_approx_eq_eps ( smm0[1] ) ( 0.0001668 ) ( 1e-7 )
-intp0 = mbs_interest_payment( balance = face_value , pt_rate = r )
-@test_approx_eq_eps ( intp0 ) ( 750000 ) ( 1e1 )
-pp0 = mbs_principal_payment( pmt = pmt0, balance = face_value, pt_rate = r )
-@test_approx_eq_eps ( pp0 ) ( 54600 ) ( 1e2 )
+@test_approx_eq_eps ( smm0[1] ) ( 0.0007 ) ( 1e-3 )
+@test_approx_eq_eps ( smm0[14] ) ( 0.0029 ) ( 1e-3 )
+@test_approx_eq_eps ( smm0[end] ) ( 0.0051 ) ( 1e-3 )
+intp0 = mbs_interest_payment( balance = face_value , passthrough_rate = r )
+@test_approx_eq_eps ( intp0 ) ( 2.71 ) ( 1e-2 )
+pp0 = mbs_principal_payment( pmt = pmt0, balance = face_value, passthrough_rate = r )
+@test_approx_eq_eps ( pp0 ) ( 0.267 ) ( 1e-3 )
 pr0 = mbs_prepayment( balance = face_value, pmt = pmt0, smm = smm0[1] )
-@test_approx_eq_eps ( pr0 ) ( 16667 ) ( 1e3 )
+@test_approx_eq_eps ( pr0 ) ( 0.267 ) ( 1e-2 ) # Excel roundoff error: should be accurate to 1e-3
 b1 = mbs_remaining_balance( balance = face_value, wac = r, pmt = pmt0; smm = smm0[1] )
-interest_pmnt, principal_pmnt, prepayment, balance_remaining =
-  mbs_levelpmt_cf( r, n, face_value, pt_rate )
-@show balance_remaining[end]
-@show prepayment[end-1:end]
-@show principal_pmnt[end-1:end]
-@show interest_pmnt[end-1:end]
+mbscf = mbs_cf( r = r, n = n, face_value = face_value, passthrough_rate = pt_rate, smm = smm0 )
+@show mbscf.balance_remaining[end]
+@show mbscf.prepayment_amt[end-1:end]
+@show mbscf.principal_pmnt[end-1:end]
+@show mbscf.mtg_pmnt[end-1:end]
+@show mbscf.interest_pmnt[end-1:end]
 
 
 # R tests from FinCal
