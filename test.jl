@@ -1,7 +1,7 @@
 # The goal is NOT to achieve 100% test coverage.
 # Think of it as sanity checks.
 
-include("Quantjl.jl")
+include( "Quantjl.jl" )
 using Base.Test
 
 # NB: comparing FloatingPoint
@@ -64,19 +64,38 @@ smm0 = mbs_cpr2smm( cpr0 )
 @test_approx_eq_eps ( smm0[1] ) ( 0.0007 ) ( 1e-3 )
 @test_approx_eq_eps ( smm0[14] ) ( 0.0029 ) ( 1e-3 )
 @test_approx_eq_eps ( smm0[end] ) ( 0.0051 ) ( 1e-3 )
-intp0 = mbs_interest_payment( balance = face_value , passthrough_rate = r )
+intp0 = mbs_interest_payment( balance = face_value , wac = r )
 @test_approx_eq_eps ( intp0 ) ( 2.71 ) ( 1e-2 )
-pp0 = mbs_principal_payment( pmt = pmt0, balance = face_value, passthrough_rate = r )
+pp0 = mbs_principal_payment( pmt = pmt0, balance = face_value, wac = r )
 @test_approx_eq_eps ( pp0 ) ( 0.267 ) ( 1e-3 )
 pr0 = mbs_prepayment( balance = face_value, pmt = pmt0, smm = smm0[1] )
-@test_approx_eq_eps ( pr0 ) ( 0.267 ) ( 1e-2 ) # Excel roundoff error: should be accurate to 1e-3
+@test_approx_eq_eps ( pr0 ) ( 0.267 ) ( 1e-2 ) # Excel roundoff error? should be accurate to 1e-3
 b1 = mbs_remaining_balance( balance = face_value, wac = r, pmt = pmt0; smm = smm0[1] )
-mbscf = mbs_cf( r = r, n = n, face_value = face_value, passthrough_rate = pt_rate, smm = smm0 )
-@show mbscf.balance_remaining[end]
-@show mbscf.prepayment_amt[end-1:end]
-@show mbscf.principal_pmnt[end-1:end]
-@show mbscf.mtg_pmnt[end-1:end]
-@show mbscf.interest_pmnt[end-1:end]
+@test_approx_eq_eps ( b1 ) ( 399.46 ) ( 1e-2 )
+mbscf = mbs_cf( r = r, n = n, face_value = face_value, wac = r, passthrough_rate = pt_rate, smm = smm0 )
+@test_approx_eq_eps ( mbscf.balance_remaining[1] ) ( 400.0 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.balance_remaining[2] ) ( 399.46 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.balance_remaining[end] ) ( 0.50 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.prepayment_amt[1] ) ( 0.267 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.prepayment_amt[2] ) ( 0.334 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.prepayment_amt[end-1] ) ( 0.003 ) ( 1e-3 )
+@test_approx_eq_eps ( mbscf.prepayment_amt[end] ) ( 0.00 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.principal_pmnt[1] ) ( 0.268 ) ( 1e-3 )
+@test_approx_eq_eps ( mbscf.principal_pmnt[2] ) ( 0.269 ) ( 1e-3 )
+@test_approx_eq_eps ( mbscf.principal_pmnt[end-1] ) ( 0.50 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.principal_pmnt[end] ) ( 0.50 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.mtg_pmnt[1] ) ( -2.976 ) ( 1e-3 )
+@test_approx_eq_eps ( mbscf.mtg_pmnt[2] ) ( -2.974 ) ( 1e-3 )
+@test_approx_eq_eps ( mbscf.mtg_pmnt[end-1] ) ( -0.507 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.mtg_pmnt[end] ) ( -0.505 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.interest_pmnt[1] ) ( 2.71 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.interest_pmnt[2] ) ( 2.70 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.interest_pmnt[end-1] ) ( 0.01 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.interest_pmnt[end] ) ( 0.00 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.passthrough_interest_pmnt[1] ) ( 2.50 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.passthrough_interest_pmnt[2] ) ( 2.50 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.passthrough_interest_pmnt[end-1] ) ( 0.01 ) ( 1e-2 )
+@test_approx_eq_eps ( mbscf.passthrough_interest_pmnt[end] ) ( 0.00 ) ( 1e-2 )
 
 
 # R tests from FinCal
