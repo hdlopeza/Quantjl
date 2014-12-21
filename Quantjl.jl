@@ -16,5 +16,7 @@ include("bonds.jl")
 include("termstrc.jl")
 include("mbs.jl")
 
+#### TO DO: ADD TESTS FROM BondPricingWeek*.jl to test.jl for bonds
+
 
 # end
