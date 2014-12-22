@@ -13,23 +13,21 @@ using Base.Test
 @test_approx_eq_eps pv_annuity( r = 0.1, n = 10, pmt = -1000, pmt_type = 1) ( 6759 ) 1e-0
 @test_approx_eq_eps pv_perpetuity( r = 0.1, pmt = 2.5, g = 0.0, pmt_type = 0) (-25) 1e-0
 @test_approx_eq_eps pv( r = 0.06, n = 10, fv = 1000, pmt = 70; pmt_type = 0) ( -1074 ) 1e-0
-cf = [-10000, -5000, 2000, 4000, 6000, 8000 ]
+cf = Float64[-10000, -5000, 2000, 4000, 6000, 8000 ]
 @test_approx_eq_eps fv_uneven( r = 0.06, cf = cf ) ( -1542 ) 1e-0
 @test_approx_eq_eps pv_uneven( r = 0.1, cf = cf ) ( 747.1 ) 1e-1
 spot_rates = [ 0.1, 0.1, 0.1 ]
 @test_approx_eq_eps fv_from_spot( spot_rates = spot_rates, pv = -1.0 ) fv_simple( r = 0.1, n = 3, pv = -1.0 ) 1e-8
 @test_approx_eq_eps pv_from_spot( spot_rates = spot_rates, fv = 1.0 ) pv_simple( r = 0.1, n = 3, fv = 1.0 ) 1e-8
-@test_approx_eq_eps ear( r = 0.0425, m = 2) ( 0.04295 ) 1e-5
-@test_approx_eq_eps ear( r = 0.0425, m = 4) ( 0.04318 ) 1e-5
-@test_approx_eq_eps ear( r = 0.0425, m = 12) ( 0.04334 ) 1e-5
-@test_approx_eq_eps ear( r = 0.0425, m = 365) ( 0.04341 ) 1e-5
-@test_approx_eq_eps ear_continuous( r = 0.0425) ( 0.04342 ) 1e-5
-@test_approx_eq_eps ear( r = 0.0425, m = 2) ( 0.04295 ) 1e-5
-@test_approx_eq_eps ear( r = 0.0425, m = 4) ( 0.04318 ) 1e-5
+@test_approx_eq_eps nominal2ear( r = 0.0425, m = 2) ( 0.04295 ) 1e-5
+@test_approx_eq_eps nominal2ear( r = 0.0425, m = 4) ( 0.04318 ) 1e-5
+@test_approx_eq_eps nominal2ear( r = 0.0425, m = 12) ( 0.04334 ) 1e-5
+@test_approx_eq_eps nominal2ear( r = 0.0425, m = 365) ( 0.04341 ) 1e-5
+@test_approx_eq_eps ear2continuous( r = 0.0425) ( 0.04342 ) 1e-5
 @test_approx_eq_eps r_perpetuity( pmt = 2.5, pv = -75 ) ( 0.03333 ) 1e-5
 @test_approx_eq_eps n_periods( r = 0.09, pv = 0, fv = 10000, pmt = -1000, pmt_type = 0) ( 7.448 ) 1e-3
 @test_approx_eq_eps pmt( r = 0.06, n = 5, pv = 5e+05, fv = 0, pmt_type = 0 ) ( -118698 ) 1e-0
-cf = [ 2000, 4000, 6000, 8000 ]
+cf = Float64[ 2000, 4000, 6000, 8000 ]
 @test_approx_eq_eps price_arbitrage( rborrow = 0.1, rlend = 0.05, cf = cf )[1] ( -15095.963390 ) 1e-5
 @test_approx_eq_eps price_arbitrage( rborrow = 0.1, rlend = 0.05, cf = cf )[2] ( -17297.525208 ) 1e-5
 @test_approx_eq_eps discount_rate( n = 5, price = 0, fv = 600, pmt = -100, pmt_type = 0) ( 0.0913 ) 1e-4
@@ -56,7 +54,6 @@ face_value = 400
 pmt0 = pmt( r = r, n = n, pv = face_value, fv = 0, pmt_type = 0 )
 @test_approx_eq_eps ( pmt0 ) ( -2.976 ) ( 1e-3 )
 cpr0 = mbs_cpr_schedule( psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold = 30, n = 360, seasoning = 3 )
-@show cpr0
 @test_approx_eq_eps ( cpr0[1] ) ( 0.008 ) ( 1e-3 )
 @test_approx_eq_eps ( cpr0[14] ) ( 0.034 ) ( 1e-3 )
 @test_approx_eq_eps ( cpr0[end] ) ( 0.06 ) ( 1e-3 )
