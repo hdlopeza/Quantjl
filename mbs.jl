@@ -31,7 +31,7 @@ function mbs_prepayment( ; balance = nothing, pmt = nothing, smm = nothing )
 end
 
 #### Get conditional prepayment rate schedule from the psa's (standard) model assumption ####
-function mbs_cpr_schedule( ; psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold::Int = 30, n::Int = 360, seasoning::Int = 0  )
+function mbs_cpr_schedule{ T <: Integer }( ; psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold::T = 30, n::T = 360, seasoning::T = 0  )
   cpr = Array( Float64, n )
   cpr[ psa_threshold:end ] = psa_maxrate
   cpr[ 1:psa_threshold ] = (psa_maxrate/psa_threshold)*[ 1:psa_threshold ]
@@ -83,13 +83,13 @@ function mbs_remaining_balance( ; balance = nothing, wac = nothing, pmt = nothin
 end
 
 #### Create MbsCashFlow type ####
-type MbsCashFlow{ T <: FloatingPoint }
-  interest_pmnt::Array{T, 1}
-  principal_pmnt::Array{T, 1}
-  mtg_pmnt::Array{T, 1}
-  balance_remaining::Array{T, 1}
-  prepayment_amt::Array{T, 1}
-  passthrough_interest_pmnt::Array{T, 1}
+type MbsCashFlow
+  interest_pmnt::Array{FloatingPoint, 1}
+  principal_pmnt::Array{FloatingPoint, 1}
+  mtg_pmnt::Array{FloatingPoint, 1}
+  balance_remaining::Array{FloatingPoint, 1}
+  prepayment_amt::Array{FloatingPoint, 1}
+  passthrough_interest_pmnt::Array{FloatingPoint, 1}
 
   function MbsCashFlow( interest_pmnt, principal_pmnt, mtg_pmnt, balance_remaining, prepayment_amt, passthrough_interest_pmnt )
     flows_tuple = ( interest_pmnt, principal_pmnt, mtg_pmnt, balance_remaining, prepayment_amt, passthrough_interest_pmnt )
@@ -100,7 +100,7 @@ type MbsCashFlow{ T <: FloatingPoint }
 end
 
 #### Get the mbs cash flows ####
-function mbs_cf( r, n::Int, face_value, wac, passthrough_rate, smm )
+function mbs_cf( r, n::Integer, face_value, wac, passthrough_rate, smm )
   # Initialize arrays for interest, principal, prepayment and mortgage (monthly) payment
   mtg_pmnt = Array( typeof( wac ), n )
   interest_pmnt, principal_pmnt = similar( mtg_pmnt ), similar( mtg_pmnt )
