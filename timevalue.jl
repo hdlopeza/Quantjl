@@ -18,8 +18,8 @@ include( "helper.jl" )
 function pv_perpetuity{ T <: FloatingPoint }( r::T, pmt; g::T = 0.0, pmt_type::Int = 0 )
   validate_pmt_type( pmt_type )
   r >= g || error( "Error: g is not smaller than r!" )
-  pv = ( pmt/( r-g ) )*( ( 1+r )^pmt_type )*( -1.0 )
-  return p
+  pv_amt = ( pmt/( r-g ) )*( ( 1+r )^pmt_type )*( -1.0 )
+  return pv_amt
 end
 
 function pv_perpetuity( ; r = nothing, pmt = nothing, g = nothing, pmt_type = nothing )
