@@ -25,7 +25,7 @@ spot_rates = [ 0.1, 0.1, 0.1 ]
 @test_approx_eq_eps nominal2ear( r = 0.0425, m = 365) ( 0.04341 ) 1e-5
 @test_approx_eq_eps ear2continuous( r = 0.0425) ( 0.04342 ) 1e-5
 @test_approx_eq_eps r_perpetuity( pmt = 2.5, pv = -75 ) ( 0.03333 ) 1e-5
-@test_approx_eq_eps n_periods( r = 0.09, pv = 0, fv = 10000, pmt = -1000, pmt_type = 0) ( 7.448 ) 1e-3
+@test_approx_eq_eps nper( r = 0.09, pv = 0, fv = 10000, pmt = -1000, pmt_type = 0) ( 7.448 ) 1e-3
 @test_approx_eq_eps pmt( r = 0.06, n = 5, pv = 5e+05, fv = 0, pmt_type = 0 ) ( -118698 ) 1e-0
 cf = Float64[ 2000, 4000, 6000, 8000 ]
 @test_approx_eq_eps price_arbitrage( rborrow = 0.1, rlend = 0.05, cf = cf )[1] ( -15095.963390 ) 1e-5

@@ -36,7 +36,7 @@ end
 
 #### Convert a given norminal rate to a continuous compounded rate ####
 function nominal2continuous{ T <: FloatingPoint }( r::T, m::Integer )
-  return m*log( 1 + r/m )
+  return m*log( 1.0 + r/m )
 end
 
 function nominal2continuous( ; r = nothing, m = nothing )
@@ -56,7 +56,7 @@ end
 
 #### Convert the effective annual rate to the stated annual rate with m compounding (nominal rate) ####
 function ear2nominal{ T <: FloatingPoint }( ear::T, m::Integer )
-  return ( 1 + ear )^( 1/m ) - 1.0
+  return ( 1.0 + ear )^( 1/m ) - 1.0
 end
 
 function ear2nominal( ; ear = nothing, m = nothing )
@@ -85,7 +85,7 @@ function ear2continuous( ; r = nothing )
 end
 
 #### Computing HPR, the holding period return ####
-function ear2hpr{ T <: FloatingPoint }( ear::T, t::Int )
+function ear2hpr{ T <: FloatingPoint }( ear::T, t::Integer )
   return ( 1.0 + ear )^( t/365 - 1.0 )
 end
 

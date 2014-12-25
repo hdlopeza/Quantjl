@@ -16,10 +16,10 @@ include("timevalue.jl")
 
 #### Create Spot Rate type ####
 type SpotRate
-  rate::Real
-  t::Int
+  rate::FloatingPoint
+  t::Integer
 
-  function SpotRate( rate::Real, t::Int )
+  function SpotRate( rate::FloatingPoint, t::Integer )
     zero(rate) <= rate <= one(rate) || error( "spot_rate must be between 0 and 1." )
     zero(t) <= t || error( "time subscript must be greater or equal to 0" )
     new( rate, t )
@@ -39,10 +39,10 @@ end
 
 #### Create Discount Factor type ####
 type DiscountFactor
-  discount::Real
-  t::Int
+  discount::FloatingPoint
+  t::Integer
 
-  function DiscountFactor( discount::Real, t::Int )
+  function DiscountFactor( discount::FloatingPoint, t::Integer )
     zero(discount) <= discount <= one(discount) || error( "discount factor must be between 0 and 1." )
     zero(t) <= t || error( "time subscript must be greater or equal 0" )
     new( discount, t )
@@ -62,11 +62,11 @@ end
 
 #### Create Forward Rate type ####
 type ForwardRate
-  rate::Real
-  t1
-  t2
+  rate::FloatingPoint
+  t1::Integer
+  t2::Integer
 
-  function ForwardRate{ T<:Real }( rate::Real, t1::T, t2::T )
+  function ForwardRate{ T<:Integer }( rate::FloatingPoint, t1::T, t2::T )
     zero(rate) <= rate <= one(rate) || error( "forward rate must be between 0 and 1." )
     t1 < t2 || error( "starting period must be stricly lower than ending period" )
     one( t1 ) <= t1 || error( "starting period must be greater or equal to one" )
