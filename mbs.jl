@@ -100,7 +100,7 @@ type MbsCashFlow
 end
 
 #### Get the mbs cash flows ####
-function mbs_cf( r, n::Integer, face_value, wac, passthrough_rate, smm )
+function mbs_cf{ T <: FloatingPoint }( r, n::Integer, face_value::T, wac::T, passthrough_rate::T, smm::Vector{T} )
   # Initialize arrays for interest, principal, prepayment and mortgage (monthly) payment
   mtg_pmnt = Array( typeof( wac ), n )
   interest_pmnt, principal_pmnt = similar( mtg_pmnt ), similar( mtg_pmnt )
@@ -109,7 +109,7 @@ function mbs_cf( r, n::Integer, face_value, wac, passthrough_rate, smm )
   # Initialize remaining balance
   bal_iter = face_value
   for i=1:n
-    n_iter::Int = n-i+1
+    n_iter::Integer = n-i+1
     smm_iter::FloatingPoint = i < n ? smm[i]:0.0
     # Update current (monthly) payment
     mtg_pmnt[i] = pmt( r = r, n = n_iter, pv = bal_iter, fv = 0, pmt_type = 0 )
@@ -129,3 +129,21 @@ function mbs_cf( ; r = nothing, n = nothing, face_value = nothing, wac = nothing
   return mbs_cf( r, n, face_value, wac, passthrough_rate, smm )
 end
 
+#### Calculate the theoretical price from cashflows and spot rates (off of the zero curve) ####
+# Get theoretical price
+function mbs_zs2price{ T <: FloatingPoint }( spotrates::Vector{T}, cf::Vector{T}, zspread::T )
+  d, dcf = similar( cf ), similar( cf ) # discount factor and discounted cash flows
+  T = length( cf )
+  for t=1:T
+    d[t] = 1/( 1 + spotrates[i] )^t
+    dcf[t] = cf[t]*d[t]
+  end
+  return sum( dcf )
+end
+
+#### Compute the Zero-volatility Spread or Z-Spread ####
+using Optim: optimize
+function mbs_zs{ T <: FloatingPoint }( price::T, spotrates::Vector{T}, cf::Vector{T} )
+  fmin( zs::T ) = ( price - mbs_zs2price( spotrates, cf, zs ) )^2
+  return optimize( fmin, 1e-10, 1.0 ).minimum
+end

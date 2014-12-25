@@ -15,7 +15,7 @@
 include( "helper.jl" )
 
 #### Estimate present value of a perpetuity ####
-function pv_perpetuity{ T <: FloatingPoint }( r::T, pmt; g::T = 0.0, pmt_type::Integer = 0 )
+function pv_perpetuity{ T <: FloatingPoint }( r::T, pmt::T; g::T = 0.0, pmt_type::Integer = 0 )
   validate_pmt_type( pmt_type )
   r >= g || error( "Error: g is not smaller than r!" )
   pv_amt = ( pmt/( r-g ) )*( ( 1+r )^pmt_type )*( -1.0 )
@@ -50,7 +50,7 @@ function pv_annuity( ; r = nothing, n = nothing, pmt = nothing, pmt_type = nothi
 end
 
 #### Estimate present value (pv) ####
-function pv{ T <: FloatingPoint }( r::T, n, fv, pmt; pmt_type::Integer = 0 )
+function pv{ T <: FloatingPoint }( r::T, n, fv::T, pmt::T; pmt_type::Integer = 0 )
     return pv_simple( r, n, fv ) + pv_annuity( r, n, pmt; pmt_type = pmt_type )
 end
 
@@ -187,7 +187,7 @@ function accrint_intra_period( ; r = nothing, frac = nothing, par = nothing )
 end
 
 #### Estimate period payment ####
-function pmt( r::Float64, n, pv, fv; pmt_type::Int = 0 )
+function pmt{ T <: FloatingPoint }( r::T, n, pv, fv; pmt_type::Integer = 0 )
   any( [ isequal(pmt_type, val) for val in 0:1 ] ) || error( "Error: pmt_type should be 0 or 1!" )
   return ( pv+fv/( 1+r )^n )*r/( 1-1/( 1+r )^n )*(-1)*( 1+r )^( -1*pmt_type )
 end
@@ -212,7 +212,7 @@ end
 
 #### Computing the rate of return for each period ####
 using Optim: optimize
-function discount_rate( n, price, fv, pmt; pmt_type::Int = 0 )
+function discount_rate( n::Integer, price, fv, pmt; pmt_type::Integer = 0 )
   any( [ isequal(pmt_type, val) for val in 0:1 ] ) ||  error( "Error: pmt_type should be 0 or 1!" )
   # fmin minimizes the squared difference between the pv and the price
   fmin( discount_rate ) = ( pv( r = discount_rate, fv = fv, n = n, pmt = pmt; pmt_type = pmt_type ) - price )^2
