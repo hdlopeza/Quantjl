@@ -5,14 +5,14 @@ include( "Quantjl.jl" )
 using Base.Test
 
 # NB: comparing FloatingPoint
-@test_approx_eq_eps fv_simple( r = 0.06, n = 10, pv = -500 ) ( 895.4 ) 1e-1
+@test_approx_eq_eps fv_simple( r = 0.06, n = 10, pv = -500. ) ( 895.4 ) 1e-1
 @test_approx_eq_eps pv_simple( r = 0.03, n = 5, fv = 1e+06 ) ( -862609 ) 1e-0
 @test_approx_eq_eps fv_annuity( r = 0.06, n = 25, pmt = -15000, pmt_type = 0 ) ( 822968 ) 1e-0
 @test_approx_eq_eps fv_annuity( r = 0.05, n = 3, pmt = -10000, pmt_type = 1 ) ( 33101 ) 1e-0
 @test_approx_eq_eps pv_annuity( r = 0.06, n = 25, pmt = -20000, pmt_type = 0) ( 255667 ) 1e-0
 @test_approx_eq_eps pv_annuity( r = 0.1, n = 10, pmt = -1000, pmt_type = 1) ( 6759 ) 1e-0
 @test_approx_eq_eps pv_perpetuity( r = 0.1, pmt = 2.5, g = 0.0, pmt_type = 0) (-25) 1e-0
-@test_approx_eq_eps pv( r = 0.06, n = 10, fv = 1000, pmt = 70; pmt_type = 0) ( -1074 ) 1e-0
+@test_approx_eq_eps pv( r = 0.06, n = 10, fv = 1000., pmt = 70.; pmt_type = 0) ( -1074 ) 1e-0
 cf = Float64[-10000, -5000, 2000, 4000, 6000, 8000 ]
 @test_approx_eq_eps fv_uneven( r = 0.06, cf = cf ) ( -1542 ) 1e-0
 @test_approx_eq_eps pv_uneven( r = 0.1, cf = cf ) ( 747.1 ) 1e-1
@@ -30,12 +30,12 @@ spot_rates = [ 0.1, 0.1, 0.1 ]
 cf = Float64[ 2000, 4000, 6000, 8000 ]
 @test_approx_eq_eps price_arbitrage( rborrow = 0.1, rlend = 0.05, cf = cf )[1] ( -15095.963390 ) 1e-5
 @test_approx_eq_eps price_arbitrage( rborrow = 0.1, rlend = 0.05, cf = cf )[2] ( -17297.525208 ) 1e-5
-@test_approx_eq_eps discount_rate( n = 5, price = 0, fv = 600, pmt = -100, pmt_type = 0) ( 0.0913 ) 1e-4
+@test_approx_eq_eps discount_rate( n = 5, price = 0, fv = 600., pmt = -100., pmt_type = 0) ( 0.0913 ) 1e-4
 @test_approx_eq_eps ear2bey(ear = 0.06) ( 0.05913 ) 1e-5
 @test_approx_eq_eps bey2ear( bey = 0.036 ) ( 0.03632 ) 1e-5
 r = bey2ear( bey = 0.036 )
-@test_approx_eq_eps ytm( face_value = 1000, price = -950, n = 2, coupon_rate = 0.12 ) ( 0.08836 ) 1e-5
-@test_approx_eq_eps ytm( face_value = 1000, price = -1040, n = 2, coupon_rate = 0.12 ) ( 0.03883 ) 1e-5
+@test_approx_eq_eps ytm( face_value = 1000., price = -950., n = 2, coupon_rate = 0.12 ) ( 0.08836 ) 1e-5
+@test_approx_eq_eps ytm( face_value = 1000., price = -1040., n = 2, coupon_rate = 0.12 ) ( 0.03883 ) 1e-5
 r = 0.01939/2
 @test_approx_eq_eps dirty_price( r = r, coupon_rate = 0.02, n = 20, face_value = 1000.0, frac = 0.105 ) ( -1006.54 ) 1e-2
 @test_approx_eq_eps price_from_ytm( ytm = 0.04, coupon_rate = 0.12, n = 20 ) ( -1271.81 ) 1e-2
@@ -53,7 +53,7 @@ n = 360 - 3
 face_value = 400
 pmt0 = pmt( r = r, n = n, pv = face_value, fv = 0, pmt_type = 0 )
 @test_approx_eq_eps ( pmt0 ) ( -2.976 ) ( 1e-3 )
-cpr0 = mbs_cpr_schedule( psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold = 30, n = 360, seasoning = 3 )
+cpr0 = mbs_cpr_psa( psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold = 30, n = 360, seasoning = 3 )
 @test_approx_eq_eps ( cpr0[1] ) ( 0.008 ) ( 1e-3 )
 @test_approx_eq_eps ( cpr0[14] ) ( 0.034 ) ( 1e-3 )
 @test_approx_eq_eps ( cpr0[end] ) ( 0.06 ) ( 1e-3 )

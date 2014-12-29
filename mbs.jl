@@ -31,7 +31,7 @@ function mbs_prepayment( ; balance = nothing, pmt = nothing, smm = nothing )
 end
 
 #### Get conditional prepayment rate schedule from the psa's (standard) model assumption ####
-function mbs_cpr_schedule{ T <: Integer }( ; psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold::T = 30, n::T = 360, seasoning::T = 0  )
+function mbs_cpr_psa{ T <: Integer }( ; psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold::T = 30, n::T = 360, seasoning::T = 0  )
   cpr = Array( Float64, n )
   cpr[ psa_threshold:end ] = psa_maxrate
   cpr[ 1:psa_threshold ] = (psa_maxrate/psa_threshold)*[ 1:psa_threshold ]
@@ -133,8 +133,8 @@ end
 # Get theoretical price
 function mbs_zs2price{ T <: FloatingPoint }( spotrates::Vector{T}, cf::Vector{T}, zspread::T )
   d, dcf = similar( cf ), similar( cf ) # discount factor and discounted cash flows
-  T = length( cf )
-  for t=1:T
+  TT = length( cf )
+  for t=1:TT
     d[t] = 1/( 1 + spotrates[i] )^t
     dcf[t] = cf[t]*d[t]
   end
