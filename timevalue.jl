@@ -50,7 +50,7 @@ function pv_annuity( ; r = nothing, n = nothing, pmt = nothing, pmt_type = nothi
 end
 
 #### Estimate present value (pv) ####
-function pv{ T <: FloatingPoint }( r::T, n, fv::T, pmt::T; pmt_type::Integer = 0 )
+function pv{ T <: FloatingPoint }( r::T, n::Integer, fv, pmt; pmt_type::Integer = 0 )
     return pv_simple( r, n, fv ) + pv_annuity( r, n, pmt; pmt_type = pmt_type )
 end
 
