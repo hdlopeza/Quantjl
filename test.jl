@@ -50,7 +50,7 @@ b0 = pv_uneven( r = 0.09, cf = cf0 )
 r = 0.08125/12
 pt_rate = 0.075/12
 n = 360 - 3
-face_value = 400
+face_value = 400.0
 pmt0 = pmt( r = r, n = n, pv = face_value, fv = 0, pmt_type = 0 )
 @test_approx_eq_eps ( pmt0 ) ( -2.976 ) ( 1e-3 )
 cpr0 = mbs_cpr_psa( psa_maxrate = 0.06, psa_speed = 100.0, psa_threshold = 30, n = 360, seasoning = 3 )
@@ -93,7 +93,6 @@ mbscf = mbs_cf( r = r, n = n, face_value = face_value, wac = r, passthrough_rate
 @test_approx_eq_eps ( mbscf.passthrough_interest_pmnt[2] ) ( 2.50 ) ( 1e-2 )
 @test_approx_eq_eps ( mbscf.passthrough_interest_pmnt[end-1] ) ( 0.01 ) ( 1e-2 )
 @test_approx_eq_eps ( mbscf.passthrough_interest_pmnt[end] ) ( 0.00 ) ( 1e-2 )
-
 
 # R tests from FinCal
 # npv( r = 0.08, cf = c(-6, 2.6, 2.4, 3.8) ) ( 1.482 )

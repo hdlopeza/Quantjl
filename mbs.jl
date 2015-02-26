@@ -94,7 +94,7 @@ type MbsCashFlow
   function MbsCashFlow( interest_pmnt, principal_pmnt, mtg_pmnt, balance_remaining, prepayment_amt, passthrough_interest_pmnt )
     flows_tuple = ( interest_pmnt, principal_pmnt, mtg_pmnt, balance_remaining, prepayment_amt, passthrough_interest_pmnt )
     arrays_length = unique( map( length, flows_tuple ) )
-    length( arrays_length ) == 1 || error( "Arrays must all have the same lengths." )
+    length( arrays_length ) == 1 || error( "Arrays must all have the same length." )
     new( interest_pmnt, principal_pmnt, mtg_pmnt, balance_remaining, prepayment_amt, passthrough_interest_pmnt )
   end
 end
@@ -131,11 +131,14 @@ end
 
 #### Calculate the theoretical price from cashflows and spot rates (off of the zero curve) ####
 # Get theoretical price
-function mbs_zs2price{ T <: FloatingPoint }( spotrates::Vector{T}, cf::Vector{T}, zspread::T )
+function mbs_zvs2price{ T <: FloatingPoint }( spotrates::Vector{T}, cf::Vector{T}, zspread::T = 0.0 )
+  msg_error = "the (absolute) value of zspread must be betweeen 0 and 1."
+  abs_zspread = abs( zspread )
+  zero( abs_zspread ) <= abs_zspread <= one( abs_zspread ) || error( msg_error )
   d, dcf = similar( cf ), similar( cf ) # discount factor and discounted cash flows
   TT = length( cf )
   for t=1:TT
-    d[t] = 1/( 1 + spotrates[i] )^t
+    d[t] = 1/( 1 + spotrates[i] + zspread )^t
     dcf[t] = cf[t]*d[t]
   end
   return sum( dcf )
@@ -143,7 +146,7 @@ end
 
 #### Compute the Zero-volatility Spread or Z-Spread ####
 using Optim: optimize
-function mbs_zs{ T <: FloatingPoint }( price::T, spotrates::Vector{T}, cf::Vector{T} )
-  fmin( zs::T ) = ( price - mbs_zs2price( spotrates, cf, zs ) )^2
+function mbs_zvs{ T <: FloatingPoint }( price::T, spotrates::Vector{T}, cf::Vector{T} )
+  fmin( zs::T ) = ( price - mbs_zvs2price( spotrates, cf, zs ) )^2
   return optimize( fmin, 1e-10, 1.0 ).minimum
 end
