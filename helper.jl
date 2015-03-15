@@ -17,3 +17,13 @@ function validate_frac( frac )
   msg_error = "Error: fraction must be between 0 and 1."
   zero( frac ) <= frac <= one( frac ) || error( msg_error )
 end
+
+# macro to create keywords-only arguments
+macro make_kwargs_only( func, args... )
+  quote
+    function $( esc( func ) )( ; args... )
+      func_args = [ arg[2] for arg in args ]
+      return $( esc( func ) )( func_args... )
+    end
+  end
+end

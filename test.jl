@@ -12,7 +12,7 @@ using Base.Test
 @test_approx_eq_eps pv_annuity( r = 0.06, n = 25, pmt = -20000, pmt_type = 0) ( 255667 ) 1e-0
 @test_approx_eq_eps pv_annuity( r = 0.1, n = 10, pmt = -1000, pmt_type = 1) ( 6759 ) 1e-0
 @test_approx_eq_eps pv_perpetuity( r = 0.1, pmt = 2.5, g = 0.0, pmt_type = 0) (-25) 1e-0
-@test_approx_eq_eps pv( r = 0.06, n = 10, fv = 1000., pmt = 70.; pmt_type = 0) ( -1074 ) 1e-0
+@test_approx_eq_eps pv( r = 0.06, n = 10, fv = 1000., pmt = 70., pmt_type = 0) ( -1074 ) 1e-0
 cf = Float64[-10000, -5000, 2000, 4000, 6000, 8000 ]
 @test_approx_eq_eps fv_uneven( r = 0.06, cf = cf ) ( -1542 ) 1e-0
 @test_approx_eq_eps pv_uneven( r = 0.1, cf = cf ) ( 747.1 ) 1e-1
