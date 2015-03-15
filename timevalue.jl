@@ -76,14 +76,8 @@ end
 
 #### Computing the present value from spot rates ####
 function pv_from_spot{ T <: FloatingPoint }( spot_rates::Vector{T}, fv::T = 1.0 )
-  n = length( spot_rates )
-  pv_spot = fv
-  # Better way to write this
-  for i=n:-1:1
-    # amount to rediscount each period = abs( pv_spot )
-    pv_spot = pv_simple( spot_rates[ i ], 1, abs( pv_spot ) )
-  end
-  return pv_spot
+  final_discount = prod( 1.0 + spot_rates )
+  return -fv/final_discount
 end
 
 # Make keywords-only equivalent
@@ -142,14 +136,8 @@ end
 
 #### Computing future value from spot rates ####
 function fv_from_spot{ T <: FloatingPoint }( spot_rates::Vector{T}, pv = -1.0 )
-  n = length( spot_rates )
-  fv_spot = pv
-  # Better way to write this
-  for i=1:n
-    # amout to reinvest each period = -abs( fv_spot )
-    fv_spot = fv_simple( spot_rates[ i ], 1, -abs( fv_spot ) )
-  end
-  return fv_spot
+  final_discount = prod( 1.0 + spot_rates )
+  return -pv*final_discount
 end
 
 # Make keywords-only equivalent
